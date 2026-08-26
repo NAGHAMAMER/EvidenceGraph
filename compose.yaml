@@ -1,0 +1,44 @@
+services:
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      target: development
+
+    container_name: evidencegraph-api
+
+    env_file:
+      - .env
+
+    ports:
+      - "${API_PORT:-8000}:8000"
+
+    volumes:
+      - ./backend/app:/app/app
+      - ./backend/tests:/app/tests
+
+    command:
+      - uvicorn
+      - app.main:app
+      - --host
+      - 0.0.0.0
+      - --port
+      - "8000"
+      - --reload
+
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - >
+          import urllib.request;
+          urllib.request.urlopen(
+          'http://localhost:8000/api/v1/health'
+          )
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+    restart: unless-stopped
