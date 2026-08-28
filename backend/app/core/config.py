@@ -12,6 +12,7 @@ class Settings(BaseSettings):
     api_host: str = "0.0.0.0"
     api_port: int = 8000
     api_prefix: str = "/api/v1"
+
     secret_key: str = "change-this-in-production"
     cors_origins: str = "http://localhost:5173"
 
@@ -21,8 +22,12 @@ class Settings(BaseSettings):
     )
 
     openalex_base_url: str = "https://api.openalex.org"
+    openalex_api_key: str = ""
     openalex_email: str = "your_email@example.com"
+
     crossref_base_url: str = "https://api.crossref.org"
+    crossref_email: str = "your_email@example.com"
+
     semantic_scholar_base_url: str = (
         "https://api.semanticscholar.org/graph/v1"
     )
