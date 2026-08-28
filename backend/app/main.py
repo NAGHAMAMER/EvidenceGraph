@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.routes.health import router as health_router
 from app.core.config import settings
-
+from app.api.routes.papers import router as papers_router
 
 app = FastAPI(
     title=settings.app_name,
@@ -28,7 +28,10 @@ app.include_router(
     health_router,
     prefix=settings.api_prefix,
 )
-
+app.include_router(
+    papers_router,
+    prefix=settings.api_prefix,
+)
 
 @app.get("/", tags=["Root"])
 async def root() -> dict[str, str]:
