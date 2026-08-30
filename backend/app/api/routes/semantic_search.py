@@ -6,12 +6,13 @@ from fastapi import (
     status,
 )
 
-from app.schemas.paper import PaperSearchResponse
-from app.services.paper_search import (
-    PaperSearchError,
-    PaperSearchService,
-    get_paper_search_service,
+from app.schemas.paper import SemanticPaperSearchResponse
+from app.services.paper_search import PaperSearchError
+from app.services.semantic_search import (
+    SemanticSearchService,
+    get_semantic_search_service,
 )
+
 
 router = APIRouter(
     prefix="/papers",
@@ -19,15 +20,12 @@ router = APIRouter(
 )
 
 
-
-
-
 @router.get(
-    "/search",
-    response_model=PaperSearchResponse,
-    summary="Search for scientific papers",
+    "/semantic-search",
+    response_model=SemanticPaperSearchResponse,
+    summary="Search and semantically rank scientific papers",
 )
-async def search_papers(
+async def semantic_search_papers(
     query: str = Query(
         min_length=2,
         max_length=300,
@@ -36,15 +34,15 @@ async def search_papers(
     limit: int = Query(
         default=10,
         ge=1,
-        le=50,
-        description="Maximum number of papers to return",
+        le=20,
+        description="Maximum number of ranked papers",
     ),
-    search_service: PaperSearchService = Depends(
-        get_paper_search_service
+    semantic_service: SemanticSearchService = Depends(
+        get_semantic_search_service
     ),
-) -> PaperSearchResponse:
+) -> SemanticPaperSearchResponse:
     try:
-        return await search_service.search(
+        return await semantic_service.search(
             query=query,
             limit=limit,
         )

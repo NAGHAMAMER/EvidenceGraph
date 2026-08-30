@@ -16,6 +16,7 @@ services:
     volumes:
       - ./backend/app:/app/app
       - ./backend/tests:/app/tests
+      - embedding_models:/models
 
     command:
       - uvicorn
@@ -42,3 +43,5 @@ services:
       start_period: 10s
 
     restart: unless-stopped
+volumes:
+  embedding_models:

@@ -264,3 +264,6 @@ class PaperSearchService:
                 "providers": providers,
             }
         )
+
+def get_paper_search_service() -> PaperSearchService:
+    return PaperSearchService()

@@ -33,7 +33,10 @@ class Settings(BaseSettings):
     )
     semantic_scholar_api_key: str = ""
 
-    embedding_model: str = "sentence-transformers/all-MiniLM-L6-v2"
+    embedding_model: str = (
+    "sentence-transformers/"
+    "paraphrase-multilingual-MiniLM-L12-v2")
+    embedding_cache_dir: str = "/models/fastembed"
     agent_max_papers: int = 10
     request_timeout_seconds: int = 30
 

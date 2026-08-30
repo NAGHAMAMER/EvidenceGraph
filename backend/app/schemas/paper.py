@@ -45,3 +45,15 @@ class PaperSearchResponse(BaseModel):
 
     providers: list[ProviderName] = Field(default_factory=list)
     papers: list[Paper] = Field(default_factory=list)
+
+class RankedPaper(Paper):
+    semantic_score: float = Field(
+        ge=-1.0,
+        le=1.0,
+    )
+class SemanticPaperSearchResponse(BaseModel):
+    query: str
+    total: int = Field(ge=0)
+    returned: int = Field(ge=0)
+    providers: list[ProviderName] = Field(default_factory=list)
+    papers: list[RankedPaper] = Field(default_factory=list)
