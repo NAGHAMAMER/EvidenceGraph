@@ -104,8 +104,13 @@ class PaperSearchService:
             for papers in provider_papers:
                 if index < len(papers):
                     combined.append(papers[index])
-
         return combined
+
+    @staticmethod
+    def deduplicate_papers(
+        papers: list[Paper],
+    ) -> list[Paper]:
+        return PaperSearchService._deduplicate(papers)
 
     @staticmethod
     def _deduplicate(
