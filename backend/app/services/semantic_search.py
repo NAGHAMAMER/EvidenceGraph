@@ -48,7 +48,6 @@ class SemanticSearchService:
             papers=ranked_papers,
         )
 
-
 @lru_cache
 def get_semantic_search_service() -> SemanticSearchService:
     return SemanticSearchService(

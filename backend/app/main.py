@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.api.routes.health import router as health_router
 from app.core.config import settings
 from app.api.routes.papers import router as papers_router
+from app.api.routes.research import router as research_router
 from app.api.routes.semantic_search import (
     router as semantic_search_router,
 )
@@ -38,6 +39,10 @@ app.include_router(
 
 app.include_router(
     semantic_search_router,
+    prefix=settings.api_prefix,
+)
+app.include_router(
+    research_router,
     prefix=settings.api_prefix,
 )
 @app.get("/", tags=["Root"])

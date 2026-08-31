@@ -84,7 +84,7 @@ class SemanticRankingService:
         )
 
         if limit is not None:
-            return ranked_papers[:limit]
+            ranked_papers = ranked_papers[:limit]
 
         return ranked_papers
 
