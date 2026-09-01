@@ -26,6 +26,10 @@ router = APIRouter(
     "",
     response_model=ResearchAgentResponse,
     summary="Run the multilingual research agent",
+    responses={
+        502: {"description": "Research agent execution failed."},
+        504: {"description": "An external research service timed out."},
+    },
 )
 async def run_research(
     request: ResearchAgentRequest,
@@ -64,6 +68,17 @@ async def run_research(
                 status.HTTP_422_UNPROCESSABLE_CONTENT
             ),
             detail=str(error),
+        ) from error
+
+    except TimeoutError as error:
+        logger.warning("Research agent request timed out.")
+
+        raise HTTPException(
+            status_code=status.HTTP_504_GATEWAY_TIMEOUT,
+            detail=(
+                "An external research service timed out. "
+                "Please try again later."
+            ),
         ) from error
 
     except Exception as error:
