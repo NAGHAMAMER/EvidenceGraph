@@ -43,6 +43,7 @@ class Settings(BaseSettings):
     llm_provider: str = "none"
     llm_model: str = ""
     llm_api_key: str = ""
+    llm_timeout_seconds: int = 120
 
     tavily_api_key: str = ""
     web_search_max_results: int = 5

@@ -574,3 +574,33 @@ def test_research_api_returns_502_on_failure(
     assert response.json()["detail"] == (
         "The research agent could not complete the request."
     )
+def test_research_api_returns_504_on_timeout(
+    monkeypatch,
+) -> None:
+    async def timed_out_agent(
+        question: str,
+        limit: int,
+    ):
+        raise TimeoutError("Simulated upstream timeout")
+
+    monkeypatch.setattr(
+        research_route,
+        "run_research_agent",
+        timed_out_agent,
+    )
+
+    client = TestClient(app)
+
+    response = client.post(
+        "/api/v1/research",
+        json={
+            "question": "How does RAG affect hallucinations?",
+            "limit": 2,
+        },
+    )
+
+    assert response.status_code == 504
+    assert response.json()["detail"] == (
+        "An external research service timed out. "
+        "Please try again later."
+    )

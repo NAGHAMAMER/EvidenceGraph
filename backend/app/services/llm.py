@@ -32,6 +32,6 @@ def get_chat_model() -> ChatGoogleGenerativeAI:
         model=settings.llm_model,
         api_key=settings.llm_api_key,
         temperature=1.0,
-        timeout=settings.request_timeout_seconds,
+        timeout=settings.llm_timeout_seconds,
         max_retries=2,
     )
