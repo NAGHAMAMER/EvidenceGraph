@@ -13,7 +13,6 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { motion } from "framer-motion";
 
 import { getTextDirection } from "../utils/language";
 
@@ -35,9 +34,18 @@ const EXAMPLE_QUESTIONS = [
   },
 ];
 
-function ResearchForm({ onSubmit, isLoading }) {
-  const [question, setQuestion] = useState("");
+function ResearchForm({
+  onSubmit,
+  isLoading,
+  initialQuestion = "",
+}) {
+  const [question, setQuestion] = useState(
+    initialQuestion,
+  );
   const [limit, setLimit] = useState(5);
+
+  const hasInitialQuestion =
+    initialQuestion.trim().length > 0;
 
   const direction = useMemo(
     () => getTextDirection("", question),
@@ -47,66 +55,138 @@ function ResearchForm({ onSubmit, isLoading }) {
   const canSubmit =
     question.trim().length >= 2 && !isLoading;
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
 
-    if (!canSubmit) {
+    if (!canSubmit || hasInitialQuestion) {
       return;
     }
 
-    onSubmit({
+    await onSubmit({
       question: question.trim(),
       limit,
     });
   }
 
-  return (
-    <Box
-      component={motion.form}
-      onSubmit={handleSubmit}
-      initial={{ opacity: 0, y: 18 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.55 }}
-    >
+  if (hasInitialQuestion) {
+    return (
       <Paper
         elevation={0}
         sx={{
-          p: { xs: 2.5, md: 4 },
+          p: {
+            xs: 2,
+            md: 2.5,
+          },
           border: "1px solid",
-          borderColor: "rgba(148, 163, 184, 0.18)",
-          borderRadius: 5,
-          background:
-            "linear-gradient(145deg, rgba(15,23,42,0.96), rgba(30,41,59,0.9))",
-          backdropFilter: "blur(18px)",
-          boxShadow: "0 24px 70px rgba(2, 8, 23, 0.32)",
+          borderColor:
+            "rgba(148, 163, 184, 0.18)",
+          borderRadius: 4,
+          backgroundColor:
+            "rgba(15, 23, 42, 0.72)",
         }}
       >
-        <Stack spacing={3}>
-         <Stack
-  direction="row"
-  spacing={1.5}
-  sx={{ alignItems: "center" }}
->
-            <ScienceRounded color="primary" />
+        <Stack spacing={1.5}>
+          <Stack
+            direction="row"
+            spacing={1}
+            sx={{ alignItems: "center" }}
+          >
+            <ScienceRounded
+              color="primary"
+              fontSize="small"
+            />
 
-            <Box>
-              <Typography variant="h5" fontWeight={750}>
-                Research a scientific question
-              </Typography>
-
-              <Typography
-                variant="body2"
-                color="text.secondary"
-              >
-                Ask in any language. EvidenceGraph will
-                research and answer in the same language.
-              </Typography>
-            </Box>
+            <Typography
+              variant="subtitle1"
+              fontWeight={750}
+            >
+              Original research question
+            </Typography>
           </Stack>
 
           <TextField
             multiline
-            minRows={5}
+            minRows={2}
+            maxRows={4}
+            fullWidth
+            value={question}
+            slotProps={{
+              htmlInput: {
+                readOnly: true,
+                dir: direction,
+              },
+            }}
+            sx={{
+              "& textarea": {
+                direction,
+                textAlign:
+                  direction === "rtl"
+                    ? "right"
+                    : "left",
+                lineHeight: 1.7,
+              },
+            }}
+          />
+        </Stack>
+      </Paper>
+    );
+  }
+
+  return (
+    <Box
+      component="form"
+      onSubmit={handleSubmit}
+    >
+      <Paper
+        elevation={0}
+        sx={{
+          p: {
+            xs: 2.25,
+            md: 3,
+          },
+          border: "1px solid",
+          borderColor:
+            "rgba(148, 163, 184, 0.18)",
+          borderRadius: 4,
+          background:
+            "linear-gradient(145deg, rgba(15,23,42,0.96), rgba(30,41,59,0.88))",
+          boxShadow:
+            "0 18px 55px rgba(2, 8, 23, 0.24)",
+        }}
+      >
+        <Stack spacing={2.25}>
+          <Box>
+            <Stack
+              direction="row"
+              spacing={1}
+              sx={{
+                alignItems: "center",
+                mb: 0.5,
+              }}
+            >
+              <ScienceRounded color="primary" />
+
+              <Typography
+                variant="h5"
+                fontWeight={780}
+              >
+                Start new research
+              </Typography>
+            </Stack>
+
+            <Typography
+              variant="body2"
+              color="text.secondary"
+            >
+              Ask in any language and receive a sourced
+              answer in the same language.
+            </Typography>
+          </Box>
+
+          <TextField
+            multiline
+            minRows={3}
+            maxRows={7}
             fullWidth
             autoFocus
             label="Research question"
@@ -116,7 +196,9 @@ function ResearchForm({ onSubmit, isLoading }) {
             onChange={(event) =>
               setQuestion(event.target.value)
             }
-            helperText={`${question.length}/1000 characters`}
+            helperText={
+              `${question.length}/1000 characters`
+            }
             slotProps={{
               htmlInput: {
                 maxLength: 1000,
@@ -127,111 +209,95 @@ function ResearchForm({ onSubmit, isLoading }) {
               "& textarea": {
                 direction,
                 textAlign:
-                  direction === "rtl" ? "right" : "left",
-                lineHeight: 1.8,
-                fontSize: "1rem",
+                  direction === "rtl"
+                    ? "right"
+                    : "left",
+                lineHeight: 1.75,
               },
             }}
           />
 
           <Box>
-            <Typography
-              variant="body2"
-              fontWeight={650}
-              gutterBottom
+            <Stack
+              direction={{
+                xs: "column",
+                sm: "row",
+              }}
+              spacing={2}
+              sx={{
+                alignItems: {
+                  xs: "stretch",
+                  sm: "center",
+                },
+              }}
             >
-              Number of research results: {limit}
-            </Typography>
+              <Box sx={{ flex: 1 }}>
+                <Typography
+                  variant="body2"
+                  fontWeight={650}
+                  gutterBottom
+                >
+                  Results per source: {limit}
+                </Typography>
 
-            <Slider
-              value={limit}
-              min={1}
-              max={10}
-              step={1}
-              marks={[
-                { value: 1, label: "1" },
-                { value: 5, label: "5" },
-                { value: 10, label: "10" },
-              ]}
-              disabled={isLoading}
-              valueLabelDisplay="auto"
-              onChange={(_, newValue) =>
-                setLimit(newValue)
-              }
-              aria-label="Number of research results"
-            />
-          </Box>
-
-          <Box>
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              sx={{ mb: 1.25 }}
-            >
-              Try an example
-            </Typography>
-<Stack
-  direction="row"
-  useFlexGap
-  sx={{
-    flexWrap: "wrap",
-    gap: 1,
-  }}
->
-              {EXAMPLE_QUESTIONS.map((example) => (
-                <Chip
-                  key={example.label}
-                  label={example.label}
-                  clickable
+                <Slider
+                  value={limit}
+                  min={1}
+                  max={10}
+                  step={1}
                   disabled={isLoading}
-                  onClick={() =>
-                    setQuestion(example.question)
+                  valueLabelDisplay="auto"
+                  onChange={(_, newValue) =>
+                    setLimit(newValue)
                   }
-                  sx={{
-                    transition:
-                      "transform 180ms ease, background 180ms ease",
-                    "&:hover": {
-                      transform: "translateY(-2px)",
-                    },
-                  }}
+                  aria-label="Number of results per source"
                 />
-              ))}
+              </Box>
+
+              <Button
+                type="submit"
+                variant="contained"
+                size="large"
+                disabled={!canSubmit}
+                startIcon={<AutoAwesomeRounded />}
+                sx={{
+                  minWidth: 190,
+                  minHeight: 48,
+                  borderRadius: 3,
+                  fontWeight: 750,
+                  textTransform: "none",
+                  background:
+                    "linear-gradient(135deg, #22d3ee, #6366f1)",
+                }}
+              >
+                {isLoading
+                  ? "Researching..."
+                  : "Start research"}
+              </Button>
             </Stack>
           </Box>
 
-          <Button
-            type="submit"
-            variant="contained"
-            size="large"
-            disabled={!canSubmit}
-            startIcon={<AutoAwesomeRounded />}
+          <Stack
+            direction="row"
+            useFlexGap
             sx={{
-              alignSelf: {
-                xs: "stretch",
-                sm: "flex-start",
-              },
-              minWidth: 210,
-              minHeight: 52,
-              borderRadius: 3,
-              fontWeight: 750,
-              textTransform: "none",
-              background:
-                "linear-gradient(135deg, #22d3ee, #6366f1)",
-              boxShadow:
-                "0 12px 30px rgba(99, 102, 241, 0.3)",
-              transition:
-                "transform 180ms ease, box-shadow 180ms ease",
-              "&:hover": {
-                transform: "translateY(-2px)",
-                boxShadow:
-                  "0 16px 38px rgba(99, 102, 241, 0.42)",
-              },
+              flexWrap: "wrap",
+              gap: 1,
             }}
           >
-            {isLoading
-              ? "Researching..."
-              : "Start research"}
-          </Button>
+            {EXAMPLE_QUESTIONS.map((example) => (
+              <Chip
+                key={example.label}
+                label={example.label}
+                clickable
+                disabled={isLoading}
+                onClick={() =>
+                  setQuestion(example.question)
+                }
+                size="small"
+              />
+            ))}
+          </Stack>
         </Stack>
       </Paper>
     </Box>

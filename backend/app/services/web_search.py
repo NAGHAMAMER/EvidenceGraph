@@ -1,3 +1,4 @@
+from collections.abc import Callable
 from functools import lru_cache
 
 from langchain_core.runnables import Runnable
@@ -8,6 +9,9 @@ from app.schemas.research import (
     WebSearchResponse,
     WebSource,
 )
+
+
+SearchToolFactory = Callable[[int], Runnable]
 
 
 class WebSearchConfigurationError(RuntimeError):
@@ -22,27 +26,64 @@ class WebSearchService:
     def __init__(
         self,
         search_tool: Runnable | None = None,
+        search_tool_factory: SearchToolFactory | None = None,
     ) -> None:
-        if search_tool is None:
+        if (
+            search_tool is not None
+            and search_tool_factory is not None
+        ):
+            raise ValueError(
+                "Provide either search_tool or "
+                "search_tool_factory, not both."
+            )
+
+        if (
+            search_tool is None
+            and search_tool_factory is None
+        ):
             if not settings.tavily_api_key.strip():
                 raise WebSearchConfigurationError(
                     "TAVILY_API_KEY is not configured."
                 )
 
-            search_tool = TavilySearch(
-                max_results=settings.web_search_max_results,
-                topic="general",
-                search_depth="basic",
-                include_answer=False,
-                include_raw_content=False,
-                include_images=False,
+            search_tool_factory = (
+                self._build_default_search_tool
             )
 
         self._search_tool = search_tool
+        self._search_tool_factory = search_tool_factory
+
+    @staticmethod
+    def _build_default_search_tool(
+        limit: int,
+    ) -> Runnable:
+        return TavilySearch(
+            max_results=limit,
+            topic="general",
+            search_depth="basic",
+            include_answer=False,
+            include_raw_content=False,
+            include_images=False,
+        )
+
+    def _get_search_tool(
+        self,
+        limit: int,
+    ) -> Runnable:
+        if self._search_tool is not None:
+            return self._search_tool
+
+        if self._search_tool_factory is None:
+            raise WebSearchConfigurationError(
+                "Web search tool factory is not configured."
+            )
+
+        return self._search_tool_factory(limit)
 
     async def search(
         self,
         query: str,
+        limit: int | None = None,
     ) -> WebSearchResponse:
         clean_query = query.strip()
 
@@ -51,8 +92,26 @@ class WebSearchService:
                 "Web search query cannot be empty."
             )
 
+        result_limit = (
+            settings.web_search_max_results
+            if limit is None
+            else limit
+        )
+
+        if isinstance(result_limit, bool) or result_limit < 1:
+            raise ValueError(
+                "Web search limit must be at least 1."
+            )
+
+        if result_limit > settings.agent_max_papers:
+            raise ValueError(
+                "Web search limit exceeds AGENT_MAX_PAPERS."
+            )
+
+        search_tool = self._get_search_tool(result_limit)
+
         try:
-            raw_response = await self._search_tool.ainvoke(
+            raw_response = await search_tool.ainvoke(
                 {"query": clean_query}
             )
         except Exception as error:
@@ -102,6 +161,9 @@ class WebSearchService:
                     score=score,
                 )
             )
+
+            if len(sources) >= result_limit:
+                break
 
         return WebSearchResponse(
             query=clean_query,

@@ -83,7 +83,8 @@ async def search_web_node(
 ) -> dict:
     try:
         result = await get_web_search_service().search(
-            state["english_query"]
+            state["english_query"],
+            limit=state["limit"],
         )
 
         return {"web_result": result}

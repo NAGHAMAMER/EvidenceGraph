@@ -1,9 +1,7 @@
 import { useMemo, useState } from "react";
 import {
-  AutoAwesomeRounded,
   ErrorOutlineRounded,
   FactCheckRounded,
-  LanguageRounded,
   PublicRounded,
   ScienceRounded,
   TranslateRounded,
@@ -22,17 +20,22 @@ import {
 } from "@mui/material";
 import { motion } from "framer-motion";
 
-import { getTextDirection } from "../utils/language";
+import EvidenceGraph from "./EvidenceGraph";
 import EvidenceList from "./EvidenceList";
 import PaperList from "./PaperList";
 import WebSourceList from "./WebSourceList";
+import { getTextDirection } from "../utils/language";
 
-function TabPanel({ activeTab, index, children }) {
+function TabPanel({
+  activeTab,
+  index,
+  children,
+}) {
   return (
     <Box
       role="tabpanel"
       hidden={activeTab !== index}
-      sx={{ pt: 3 }}
+      sx={{ pt: 2.5 }}
     >
       {activeTab === index && children}
     </Box>
@@ -40,7 +43,13 @@ function TabPanel({ activeTab, index, children }) {
 }
 
 function ResearchResults({ result }) {
-  const [activeTab, setActiveTab] = useState(0);
+  const [
+    tabSelection,
+    setTabSelection,
+  ] = useState({
+    turnId: result?.turn_id,
+    value: 0,
+  });
 
   const direction = useMemo(
     () =>
@@ -51,16 +60,27 @@ function ResearchResults({ result }) {
     [result],
   );
 
-
-
   if (!result) {
     return null;
   }
 
-  function handleSourceSelect(sourceId) {
-    const targetTab = sourceId.startsWith("P") ? 2 : 3;
+  const activeTab =
+    tabSelection.turnId === result.turn_id
+      ? tabSelection.value
+      : 0;
 
-    setActiveTab(targetTab);
+  function selectTab(value) {
+    setTabSelection({
+      turnId: result.turn_id,
+      value,
+    });
+  }
+
+  function handleSourceSelect(sourceId) {
+    const targetTab =
+      sourceId.startsWith("P") ? 1 : 2;
+
+    selectTab(targetTab);
 
     window.setTimeout(() => {
       document
@@ -75,41 +95,66 @@ function ResearchResults({ result }) {
   return (
     <Box
       component={motion.section}
-      initial={{ opacity: 0, y: 28 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.55 }}
-      sx={{ mt: 4 }}
+      initial={{
+        opacity: 0,
+        y: 20,
+      }}
+      animate={{
+        opacity: 1,
+        y: 0,
+      }}
+      transition={{
+        duration: 0.4,
+      }}
+      sx={{ mt: 3 }}
     >
       <Paper
         elevation={0}
         sx={{
-          borderRadius: 5,
+          borderRadius: 4,
           overflow: "hidden",
           border: "1px solid",
-          borderColor: "rgba(148, 163, 184, 0.18)",
-          backgroundColor: "rgba(15, 23, 42, 0.9)",
-          boxShadow: "0 28px 80px rgba(2, 8, 23, 0.3)",
+          borderColor:
+            "rgba(148, 163, 184, 0.18)",
+          backgroundColor:
+            "rgba(15, 23, 42, 0.88)",
         }}
       >
-        <Box sx={{ p: { xs: 2.5, md: 4 } }}>
+        <Box
+          sx={{
+            p: {
+              xs: 2,
+              md: 2.75,
+            },
+          }}
+        >
           <Stack
             direction={{
               xs: "column",
               md: "row",
             }}
-            justifyContent="space-between"
-            gap={2}
+            sx={{
+              gap: 1.5,
+              alignItems: {
+                xs: "flex-start",
+                md: "center",
+              },
+              justifyContent: "space-between",
+            }}
           >
             <Box>
               <Stack
                 direction="row"
-                alignItems="center"
                 spacing={1}
+                sx={{ alignItems: "center" }}
               >
-                <AutoAwesomeRounded color="primary" />
+                <FactCheckRounded color="primary" />
 
-                <Typography variant="h4" fontWeight={850}>
-                  Research result
+                <Typography
+                  variant="h5"
+                  fontWeight={820}
+                >
+                  Evidence details
                 </Typography>
               </Stack>
 
@@ -117,34 +162,46 @@ function ResearchResults({ result }) {
                 variant="body2"
                 dir="auto"
                 color="text.secondary"
-                sx={{ mt: 1 }}
+                sx={{
+                  mt: 0.75,
+                  lineHeight: 1.6,
+                }}
               >
-                {result.question}
+                Evidence and sources for turn{" "}
+                {result.turn_index}.
               </Typography>
             </Box>
 
             <Stack
               direction="row"
               useFlexGap
-              flexWrap="wrap"
-              gap={1}
+              sx={{
+                flexWrap: "wrap",
+                gap: 0.75,
+              }}
             >
               <Chip
-                icon={<LanguageRounded />}
-                label={result.detected_language}
+                label={
+                  `${result.evidence.length} claims`
+                }
+                size="small"
                 color="primary"
                 variant="outlined"
               />
 
               <Chip
-                icon={<ScienceRounded />}
-                label={`${result.papers.length} papers`}
+                label={
+                  `${result.papers.length} papers`
+                }
+                size="small"
                 variant="outlined"
               />
 
               <Chip
-                icon={<PublicRounded />}
-                label={`${result.web_sources.length} web sources`}
+                label={
+                  `${result.web_sources.length} web`
+                }
+                size="small"
                 variant="outlined"
               />
             </Stack>
@@ -156,81 +213,142 @@ function ResearchResults({ result }) {
         <Tabs
           value={activeTab}
           onChange={(_, newValue) =>
-            setActiveTab(newValue)
+            selectTab(newValue)
           }
           variant="scrollable"
           scrollButtons="auto"
-          aria-label="Research result sections"
+          aria-label="Research evidence sections"
           sx={{
-            px: { xs: 1, md: 2 },
+            px: {
+              xs: 0.5,
+              md: 1.5,
+            },
             "& .MuiTab-root": {
-              minHeight: 64,
+              minHeight: 54,
               textTransform: "none",
               fontWeight: 700,
             },
           }}
         >
           <Tab
-            icon={<AutoAwesomeRounded />}
-            iconPosition="start"
-            label="Answer"
-          />
-
-          <Tab
             icon={<FactCheckRounded />}
             iconPosition="start"
-            label={`Evidence (${result.evidence.length})`}
+            label={
+              `Evidence (${result.evidence.length})`
+            }
           />
 
           <Tab
             icon={<ScienceRounded />}
             iconPosition="start"
-            label={`Papers (${result.papers.length})`}
+            label={
+              `Papers (${result.papers.length})`
+            }
           />
 
           <Tab
             icon={<PublicRounded />}
             iconPosition="start"
-            label={`Web (${result.web_sources.length})`}
+            label={
+              `Web (${result.web_sources.length})`
+            }
+          />
+
+          <Tab
+            icon={<TranslateRounded />}
+            iconPosition="start"
+            label="Details"
           />
         </Tabs>
 
         <Divider />
 
-        <Box sx={{ p: { xs: 2.5, md: 4 } }}>
-          <TabPanel activeTab={activeTab} index={0}>
-            <Stack spacing={3}>
-              <Box>
-                <Typography
-                  variant="overline"
-                  color="primary.main"
-                  fontWeight={800}
-                >
-                  Synthesized answer
-                </Typography>
+        <Box
+          sx={{
+            p: {
+              xs: 2,
+              md: 2.75,
+            },
+          }}
+        >
+          <TabPanel
+            activeTab={activeTab}
+            index={0}
+          >
+            {result.evidence.length > 0 ? (
+              <>
+                <EvidenceGraph
+                  key={result.turn_id}
+                  result={result}
+                  onSourceSelect={
+                    handleSourceSelect
+                  }
+                />
 
-                <Typography
-                  variant="body1"
-                  dir={direction}
-                  sx={{
-                    mt: 1,
-                    whiteSpace: "pre-line",
-                    textAlign:
-                      direction === "rtl"
-                        ? "right"
-                        : "left",
-                    lineHeight: 2,
-                    fontSize: "1.05rem",
-                  }}
-                >
-                  {result.answer}
-                </Typography>
-              </Box>
+                <EvidenceList
+                  evidence={result.evidence}
+                  direction={direction}
+                  onSourceSelect={
+                    handleSourceSelect
+                  }
+                />
+              </>
+            ) : (
+              <Alert
+                severity="info"
+                variant="outlined"
+              >
+                No structured evidence claims were
+                generated for this turn.
+              </Alert>
+            )}
+          </TabPanel>
 
+          <TabPanel
+            activeTab={activeTab}
+            index={1}
+          >
+            {result.papers.length > 0 ? (
+              <PaperList papers={result.papers} />
+            ) : (
+              <Alert
+                severity="info"
+                variant="outlined"
+              >
+                No scientific papers were returned for
+                this turn.
+              </Alert>
+            )}
+          </TabPanel>
+
+          <TabPanel
+            activeTab={activeTab}
+            index={2}
+          >
+            {result.web_sources.length > 0 ? (
+              <WebSourceList
+                sources={result.web_sources}
+              />
+            ) : (
+              <Alert
+                severity="info"
+                variant="outlined"
+              >
+                No web sources were returned for this
+                turn.
+              </Alert>
+            )}
+          </TabPanel>
+
+          <TabPanel
+            activeTab={activeTab}
+            index={3}
+          >
+            <Stack spacing={2.5}>
               <Paper
                 elevation={0}
                 sx={{
-                  p: 2.5,
+                  p: 2,
                   borderRadius: 3,
                   border: "1px solid",
                   borderColor:
@@ -242,7 +360,9 @@ function ResearchResults({ result }) {
                 <Stack
                   direction="row"
                   spacing={1}
-                  alignItems="flex-start"
+                  sx={{
+                    alignItems: "flex-start",
+                  }}
                 >
                   <TranslateRounded
                     color="secondary"
@@ -276,8 +396,10 @@ function ResearchResults({ result }) {
                   <Stack
                     direction="row"
                     spacing={1}
-                    alignItems="center"
-                    sx={{ mb: 1.5 }}
+                    sx={{
+                      alignItems: "center",
+                      mb: 1.25,
+                    }}
                   >
                     <WarningAmberRounded color="warning" />
 
@@ -296,11 +418,6 @@ function ResearchResults({ result }) {
                           key={`${limitation}-${index}`}
                           severity="warning"
                           variant="outlined"
-                          sx={{
-                            "& .MuiAlert-message": {
-                              width: "100%",
-                            },
-                          }}
                         >
                           <Typography dir="auto">
                             {limitation}
@@ -317,8 +434,10 @@ function ResearchResults({ result }) {
                   <Stack
                     direction="row"
                     spacing={1}
-                    alignItems="center"
-                    sx={{ mb: 1.5 }}
+                    sx={{
+                      alignItems: "center",
+                      mb: 1.25,
+                    }}
                   >
                     <ErrorOutlineRounded color="error" />
 
@@ -331,35 +450,34 @@ function ResearchResults({ result }) {
                   </Stack>
 
                   <Stack spacing={1}>
-                    {result.errors.map((error, index) => (
-                      <Alert
-                        key={`${error}-${index}`}
-                        severity="error"
-                        variant="outlined"
-                      >
-                        {error}
-                      </Alert>
-                    ))}
+                    {result.errors.map(
+                      (error, index) => (
+                        <Alert
+                          key={`${error}-${index}`}
+                          severity="error"
+                          variant="outlined"
+                        >
+                          {error}
+                        </Alert>
+                      ),
+                    )}
                   </Stack>
                 </Box>
               )}
+
+              {(
+                result.limitations?.length === 0 &&
+                result.errors?.length === 0
+              ) && (
+                <Alert
+                  severity="success"
+                  variant="outlined"
+                >
+                  No additional limitations or partial
+                  service errors were reported.
+                </Alert>
+              )}
             </Stack>
-          </TabPanel>
-
-          <TabPanel activeTab={activeTab} index={1}>
-            <EvidenceList
-              evidence={result.evidence}
-              direction={direction}
-              onSourceSelect={handleSourceSelect}
-            />
-          </TabPanel>
-
-          <TabPanel activeTab={activeTab} index={2}>
-            <PaperList papers={result.papers} />
-          </TabPanel>
-
-          <TabPanel activeTab={activeTab} index={3}>
-            <WebSourceList sources={result.web_sources} />
           </TabPanel>
         </Box>
       </Paper>

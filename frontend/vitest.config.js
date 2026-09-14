@@ -10,5 +10,9 @@ export default defineConfig({
     css: true,
     globals: true,
     clearMocks: true,
+
+    pool: "threads",
+    maxWorkers: 1,
+    isolate: true,
   },
 });
