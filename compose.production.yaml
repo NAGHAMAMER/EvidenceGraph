@@ -1,12 +1,13 @@
+name: evidencegraph-production
+
 services:
   db:
     image: postgres:17-alpine
-    container_name: evidencegraph-db
 
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-evidencegraph}
       POSTGRES_USER: ${POSTGRES_USER:-evidencegraph}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-evidencegraph_dev_password}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be configured}
 
     volumes:
       - postgres_data:/var/lib/postgresql/data
@@ -26,15 +27,23 @@ services:
     restart: unless-stopped
 
   api:
+    image: evidencegraph-api:production
+
     build:
       context: ./backend
       dockerfile: Dockerfile
-      target: development
-
-    container_name: evidencegraph-api
+      target: production
+      args:
+        EMBEDDING_MODEL: ${EMBEDDING_MODEL:-sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2}
 
     env_file:
       - .env
+
+    environment:
+      APP_ENV: production
+      APP_DEBUG: "false"
+      PORT: 8000
+      EMBEDDING_CACHE_DIR: /opt/models/fastembed
 
     depends_on:
       db:
@@ -42,22 +51,6 @@ services:
 
     ports:
       - "${API_PORT:-8000}:8000"
-
-    volumes:
-      - ./backend/app:/app/app
-      - ./backend/tests:/app/tests
-      - ./backend/alembic:/app/alembic
-      - ./backend/alembic.ini:/app/alembic.ini
-      - embedding_models:/models
-
-    command:
-      - uvicorn
-      - app.main:app
-      - --host
-      - 0.0.0.0
-      - --port
-      - "8000"
-      - --reload
 
     healthcheck:
       test:
@@ -78,14 +71,14 @@ services:
     restart: unless-stopped
 
   frontend:
+    image: evidencegraph-frontend:production
+
     build:
       context: ./frontend
       dockerfile: Dockerfile
       target: production
       args:
         VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost:8000/api/v1}
-
-    container_name: evidencegraph-frontend
 
     depends_on:
       api:
@@ -106,5 +99,5 @@ services:
     restart: unless-stopped
 
 volumes:
-  embedding_models:
   postgres_data:
+    name: evidencegraph_postgres_data

@@ -8,3 +8,6 @@ langchain-core==1.6.1
 langgraph==1.2.11
 langchain-google-genai==4.3.7
 langchain-tavily==0.2.18
+SQLAlchemy==2.0.52
+psycopg[binary]==3.3.5
+alembic==1.19.2
