@@ -428,7 +428,11 @@ def test_research_graph_runs_all_nodes(
             return make_scientific_result()
 
     class FakeWebService:
-        async def search(self, query: str):
+        async def search(
+            self,
+            query: str,
+            limit: int,
+        ):
             return make_web_result()
 
     class FakeAnswerService:

@@ -237,7 +237,7 @@ function ResearchForm({
                   fontWeight={650}
                   gutterBottom
                 >
-                  Results: {limit}
+                  Results per source: {limit}
                 </Typography>
 
                 <Slider
@@ -250,7 +250,7 @@ function ResearchForm({
                   onChange={(_, newValue) =>
                     setLimit(newValue)
                   }
-                  aria-label="Number of research results"
+                  aria-label="Number of results per source"
                 />
               </Box>
 

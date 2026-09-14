@@ -124,7 +124,8 @@ async def search_follow_up_node(
     )
 
     web_call = get_web_search_service().search(
-        analysis.english_query
+        analysis.english_query,
+        limit=limit,
     )
 
     scientific_outcome, web_outcome = (
