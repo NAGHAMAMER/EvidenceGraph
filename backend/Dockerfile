@@ -14,8 +14,7 @@ WORKDIR /app
 
 COPY requirements.txt .
 
-RUN --mount=type=cache,id=evidencegraph-pip-base,target=/root/.cache/pip \
-    pip install -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 COPY app ./app
 COPY alembic.ini .
@@ -28,8 +27,7 @@ FROM base AS development
 
 COPY requirements-dev.txt .
 
-RUN --mount=type=cache,id=evidencegraph-pip-development,target=/root/.cache/pip \
-    pip install -r requirements-dev.txt
+RUN pip install --no-cache-dir -r requirements-dev.txt
 
 COPY tests ./tests
 
