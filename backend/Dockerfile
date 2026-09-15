@@ -14,7 +14,7 @@ WORKDIR /app
 
 COPY requirements.txt .
 
-RUN --mount=type=cache,target=/root/.cache/pip \
+RUN --mount=type=cache,id=evidencegraph-pip-base,target=/root/.cache/pip \
     pip install -r requirements.txt
 
 COPY app ./app
@@ -28,7 +28,7 @@ FROM base AS development
 
 COPY requirements-dev.txt .
 
-RUN --mount=type=cache,target=/root/.cache/pip \
+RUN --mount=type=cache,id=evidencegraph-pip-development,target=/root/.cache/pip \
     pip install -r requirements-dev.txt
 
 COPY tests ./tests
