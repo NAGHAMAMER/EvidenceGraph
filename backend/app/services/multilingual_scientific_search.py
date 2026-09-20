@@ -17,7 +17,6 @@ from app.services.semantic_ranking import (
     get_semantic_ranking_service,
 )
 
-
 logger = logging.getLogger(__name__)
 
 

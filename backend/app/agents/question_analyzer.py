@@ -6,7 +6,6 @@ from langchain_core.runnables import Runnable
 from app.schemas.research import QuestionAnalysis
 from app.services.llm import get_chat_model
 
-
 SYSTEM_PROMPT = """
 You prepare multilingual questions for scientific and web research.
 

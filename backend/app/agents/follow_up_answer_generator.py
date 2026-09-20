@@ -12,7 +12,6 @@ from app.schemas.research import (
 )
 from app.services.llm import get_chat_model
 
-
 SYSTEM_PROMPT = """
 You are an evidence-focused multilingual research assistant
 answering a follow-up question inside an existing conversation.

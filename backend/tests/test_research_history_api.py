@@ -1,14 +1,12 @@
 from datetime import datetime, timezone
 from uuid import UUID, uuid4
 
-from fastapi.testclient import TestClient
-
 from app.main import app
 from app.schemas.research import (
     ResearchSessionDetail,
     StoredResearchTurn,
 )
-
+from fastapi.testclient import TestClient
 
 client = TestClient(app)
 

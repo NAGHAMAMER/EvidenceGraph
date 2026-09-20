@@ -1,8 +1,6 @@
 import asyncio
 
 import pytest
-from fastapi.testclient import TestClient
-
 from app.agents import research_graph as graph_module
 from app.agents.answer_generator import AnswerGenerator
 from app.agents.question_analyzer import QuestionAnalyzer
@@ -28,6 +26,7 @@ from app.services.web_search import (
     WebSearchError,
     WebSearchService,
 )
+from fastapi.testclient import TestClient
 
 
 class FakeRunnable:

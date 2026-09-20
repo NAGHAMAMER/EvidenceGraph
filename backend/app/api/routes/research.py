@@ -27,7 +27,6 @@ from app.services.research_repository import (
     get_research_repository,
 )
 
-
 logger = logging.getLogger(__name__)
 
 

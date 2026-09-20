@@ -1,7 +1,6 @@
 import asyncio
 
 import httpx
-
 from app.services.providers.crossref import CrossrefProvider
 from app.services.providers.openalex import OpenAlexProvider
 

@@ -1,6 +1,5 @@
 import numpy as np
 import pytest
-
 from app.nlp.embeddings import EmbeddingService
 from app.schemas.paper import Paper
 from app.services.semantic_ranking import SemanticRankingService

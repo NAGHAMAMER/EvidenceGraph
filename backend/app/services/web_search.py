@@ -10,7 +10,6 @@ from app.schemas.research import (
     WebSource,
 )
 
-
 SearchToolFactory = Callable[[int], Runnable]
 
 

@@ -6,7 +6,6 @@ from app.core.config import settings
 from app.schemas.paper import Paper, PaperAuthor, ProviderName
 from app.services.providers.base import PaperProvider, ProviderRequestError
 
-
 OPENALEX_SELECT_FIELDS = ",".join(
     [
         "id",

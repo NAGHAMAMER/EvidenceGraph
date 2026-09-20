@@ -1,6 +1,6 @@
+import re
 from datetime import date
 from html import unescape
-import re
 from typing import Any
 
 import httpx

@@ -1,8 +1,6 @@
 from collections.abc import Iterator
 
 import pytest
-from fastapi.testclient import TestClient
-
 from app.api.routes.papers import (
     get_paper_search_service,
 )
@@ -11,6 +9,7 @@ from app.schemas.paper import (
     Paper,
     PaperSearchResponse,
 )
+from fastapi.testclient import TestClient
 
 
 class FakePaperSearchService:

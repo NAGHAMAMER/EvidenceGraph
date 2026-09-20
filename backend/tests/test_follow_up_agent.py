@@ -1,8 +1,6 @@
 from datetime import datetime, timezone
 from uuid import uuid4
 
-from fastapi.testclient import TestClient
-
 from app.agents.follow_up_graph import route_follow_up
 from app.main import app
 from app.schemas.follow_up import FollowUpAnalysis
@@ -14,7 +12,7 @@ from app.schemas.research import (
     WebSearchResponse,
     WebSource,
 )
-
+from fastapi.testclient import TestClient
 
 client = TestClient(app)
 

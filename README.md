@@ -1,5 +1,7 @@
 # EvidenceGraph
 
+[![CI Quality Gate](https://github.com/NAGHAMAMER/EvidenceGraph/actions/workflows/ci.yml/badge.svg)](https://github.com/NAGHAMAMER/EvidenceGraph/actions/workflows/ci.yml)
+
 EvidenceGraph is a multilingual agentic research platform that searches scientific literature and web sources, ranks evidence semantically, generates sourced answers, and visualizes the relationship between questions, claims, papers, and web sources.
 
 The system supports research conversations with persistent memory. Follow-up questions are answered from the saved research context when sufficient evidence already exists; otherwise, the agent performs a new search and merges the results into the conversation.
