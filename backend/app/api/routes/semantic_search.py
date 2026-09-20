@@ -13,7 +13,6 @@ from app.services.semantic_search import (
     get_semantic_search_service,
 )
 
-
 router = APIRouter(
     prefix="/papers",
     tags=["Scientific Papers"],

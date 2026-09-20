@@ -22,7 +22,6 @@ from app.services.web_search import (
     get_web_search_service,
 )
 
-
 logger = logging.getLogger(__name__)
 
 

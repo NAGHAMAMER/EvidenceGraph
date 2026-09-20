@@ -1,9 +1,8 @@
 from datetime import date
 
 import pytest
-from pydantic import ValidationError
-
 from app.schemas.paper import Paper, PaperAuthor, PaperSearchResponse
+from pydantic import ValidationError
 
 
 def test_paper_schema_accepts_valid_data() -> None:

@@ -2,7 +2,6 @@ from datetime import datetime, timezone
 from uuid import UUID
 
 import pytest
-
 from app.main import app
 from app.schemas.research import (
     ResearchAgentResponse,

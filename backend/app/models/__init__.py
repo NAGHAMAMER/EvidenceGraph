@@ -3,7 +3,6 @@ from app.models.research import (
     ResearchTurn,
 )
 
-
 __all__ = [
     "ResearchSession",
     "ResearchTurn",

@@ -6,7 +6,6 @@ from app.services.providers.base import PaperProvider
 from app.services.providers.crossref import CrossrefProvider
 from app.services.providers.openalex import OpenAlexProvider
 
-
 logger = logging.getLogger(__name__)
 
 

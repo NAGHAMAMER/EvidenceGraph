@@ -7,7 +7,6 @@ from app.schemas.follow_up import FollowUpAnalysis
 from app.schemas.research import ResearchSessionDetail
 from app.services.llm import get_chat_model
 
-
 SYSTEM_PROMPT = """
 You route multilingual follow-up questions in a saved research session.
 

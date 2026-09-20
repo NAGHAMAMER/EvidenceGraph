@@ -10,7 +10,6 @@ from app.schemas.research import (
 )
 from app.services.llm import get_chat_model
 
-
 SYSTEM_PROMPT = """
 You are an evidence-focused multidisciplinary research assistant.
 

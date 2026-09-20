@@ -1,6 +1,5 @@
 import numpy as np
 import pytest
-
 from app.nlp.embeddings import EmbeddingService
 
 

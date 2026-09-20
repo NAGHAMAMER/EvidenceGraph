@@ -7,7 +7,6 @@ from numpy.typing import NDArray
 
 from app.core.config import settings
 
-
 FloatArray = NDArray[np.float32]
 
 

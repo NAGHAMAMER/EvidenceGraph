@@ -23,7 +23,6 @@ from app.schemas.research import (
 )
 from app.services.client_identity import get_client_id
 
-
 logger = logging.getLogger(__name__)
 
 

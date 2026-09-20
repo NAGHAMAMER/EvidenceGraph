@@ -1,5 +1,3 @@
-from fastapi.testclient import TestClient
-
 from app.main import app
 from app.schemas.paper import (
     RankedPaper,
@@ -8,7 +6,7 @@ from app.schemas.paper import (
 from app.services.semantic_search import (
     get_semantic_search_service,
 )
-
+from fastapi.testclient import TestClient
 
 client = TestClient(app)
 
